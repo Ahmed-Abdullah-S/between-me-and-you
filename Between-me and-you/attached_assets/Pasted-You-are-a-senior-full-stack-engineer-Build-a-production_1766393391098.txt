@@ -1,0 +1,210 @@
+You are a senior full-stack engineer. Build a production-ready MVP web app called "بيني وبينك".
+
+0) Goal
+
+A calm Arabic (Saudi white) web app where the user vents freely, then the AI asks one question per turn, and eventually reveals:
+
+“مشكلتك مو … مشكلتك …”
+
+A short explanation based on the user’s words
+
+One small actionable step (not a life plan)
+
+The app must be simple, clean, RTL by default, and safe (no medical diagnosis).
+
+1) Tech stack
+
+Next.js 14+ (App Router)
+
+TypeScript
+
+No database in MVP
+
+Server-side OpenAI call via an API route
+
+Minimal CSS (plain CSS modules or globals). No heavy UI frameworks.
+
+2) Pages / Routes
+2.1 Main page /
+
+Single page containing:
+
+Header with the title: "بيني وبينك"
+
+The welcome message shown at the top exactly (Arabic lines preserved)
+
+A large textarea for the first vent message (user can press Send)
+
+A chat transcript area showing user/assistant messages (bubble style)
+
+Input box + send button for ongoing messages
+
+“ابدأ من جديد” button to clear conversation state
+
+A small footer disclaimer:
+
+“تنبيه: هذا فهم مبدئي مو تشخيص طبي. إذا كنت في خطر أو تفكر بإيذاء نفسك اطلب مساعدة مختصة فورًا.”
+
+Welcome message (render exactly):
+
+يمكن تحس إنك متضايق
+أو متلخبط
+أو حتى ما تدري وش فيك
+
+عادي
+
+اكتب اللي في بالك
+وأنا بسألك كم سؤال
+عشان نفصل الشعور
+عن المشكلة
+
+خلك على طبيعتك
+ما فيه إجابة صح أو غلط
+
+3) UX rules (must implement)
+
+RTL layout by default (dir="rtl")
+
+Calm spacing, readable font, subtle borders
+
+Show a “typing…” indicator while waiting for server response
+
+Disable send button while loading
+
+Only one assistant question per assistant turn (enforced by prompt)
+
+Maintain conversation history in React state (array of { role: "user"|"assistant", content: string })
+
+Provide “Reset” button that clears history + input
+
+4) Backend API route
+
+Create POST /api/chat (Next.js route handler):
+
+Request body: { messages: {role, content}[] }
+
+It will call OpenAI Responses API server-side
+
+Reads key from process.env.OPENAI_API_KEY
+
+Never expose key client-side
+
+Return JSON: { reply: string }
+
+Handle errors gracefully with a friendly Arabic error message
+
+5) OpenAI call
+
+Use OpenAI Responses API via fetch("https://api.openai.com/v1/responses", ...).
+
+Put the “SYSTEM/DEVELOPER PROMPT” content as the top instruction input
+
+Then include the conversation messages
+
+Choose a reasonable model default (make it configurable via env OPENAI_MODEL, fallback to a commonly available one)
+
+Keep temperature moderate (e.g. 0.6) to allow natural tone without hallucinating too much
+
+Ensure the assistant replies in Arabic Saudi white tone
+
+6) Safety constraints (must be in prompt + code)
+
+The assistant must not diagnose medical/psychological conditions
+
+If the user expresses self-harm intent, the assistant must:
+
+Respond with a gentle, urgent safety message in Arabic
+
+Encourage seeking professional help or emergency services
+
+Not continue “analysis mode”
+(Enforce through system prompt)
+
+7) File structure (required)
+
+Create at minimum:
+
+app/page.tsx (main UI)
+
+app/api/chat/route.ts (server route)
+
+app/globals.css (RTL + minimal theme)
+
+components/Chat.tsx (chat UI)
+
+components/MessageBubble.tsx
+
+.env.example containing:
+
+OPENAI_API_KEY=
+
+OPENAI_MODEL=
+
+README.md with setup + run instructions:
+
+npm install
+
+npm run dev
+
+8) Styling requirements (simple)
+
+Background: light neutral
+
+Container centered with max width ~720px
+
+Chat bubbles:
+
+user bubble aligned left or right according to RTL but visually distinct
+
+assistant bubble distinct
+
+Ensure Arabic line breaks in welcome message are preserved (white-space: pre-line)
+
+9) The “Bيني وبينك” SYSTEM/DEVELOPER PROMPT (MUST USE VERBATIM)
+
+Use this exact content in the OpenAI call:
+
+أنت “بيني وبينك”: مساحة آمنة للمستخدم. تستمع، تفهم، وتساعده يكتشف مشكلته الحقيقية بشكل مبدئي.
+أنت مو طبيب، مو معالج نفسي، مو واعظ، مو محفّز تسويقي.
+اللغة عربي بلهجة سعودية بيضاء مريحة. جدّيتك تتغيّر حسب حالة المستخدم (هادئ/عقلاني/صريح محترم).
+ممنوع التشخيص الطبي أو مصطلحات نفسية طبية. ممنوع أسلوب “لازم/يجب”.
+
+الهدف: تسمية المشكلة الحقيقية بوضوح (مشكلتك مو… مشكلتك…).
+
+الطريقة:
+
+ابدأ بالاستماع والفضفضة الحرة.
+
+بعد الفضفضة: أعد صياغة مختصرة للتأكيد (خلّني أتأكد إني فاهمك…).
+
+اسأل سؤال واحد فقط في كل رد. لا تكثر.
+
+حلّل داخليًا لاختيار أقرب مشكلة جوهرية من: الاستنزاف، قرار مؤجل، فقدان التقدم، صراع داخلي، هروب ذكي، حمل مو لك، فقدان السيطرة، تجاهل الذات.
+
+إذا المستخدم واعي لكنه متردد/يتهرب: اسأل مرة واحدة فقط:
+“تحس إنك عارف وش المفروض تسوي… بس ما سويته؟”
+
+عند “الكشف النهائي” التزم بالصيغة:
+
+مشكلتك مو [الشكوى]
+مشكلتك [التسمية الحقيقية]
+
+تفسير بسيط مرتبط بكلام المستخدم
+
+خطوة مبدئية واحدة فقط
+
+لو ظهرت مؤشرات خطرة (إيذاء النفس…): خفّف النبرة، قل إن هذا فهم مبدئي، وشجّع بلطف على طلب مساعدة مختصة.
+
+اختم بهدوء: “إذا حاب ترجع… بيني وبينك موجود”.
+
+10) Deliverable expectations
+
+Output the full code for each file
+
+Ensure TypeScript types are correct
+
+Ensure API route works
+
+Provide final quick start instructions
+
+Now implement the project fully.

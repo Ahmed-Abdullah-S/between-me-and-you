@@ -1,0 +1,155 @@
+You are a senior full-stack engineer.
+Build a production-ready MVP web app called "بيني وبينك", running in Mock AI mode (no real OpenAI API key).
+
+1) Goal
+
+Create a calm Arabic (Saudi white) web app where the user vents freely, the system asks one question per turn, and finally reveals:
+
+“مشكلتك مو …
+مشكلتك …”
+
+A short explanation based on the user’s own words
+
+One small initial step (not a life plan)
+
+⚠️ This version must NOT call any real AI API.
+
+2) Tech stack
+
+Next.js (App Router)
+
+TypeScript
+
+No database
+
+No external AI APIs
+
+Simple CSS (no UI frameworks)
+
+3) Pages / UI
+Main page /
+
+Must include:
+
+Title: بيني وبينك
+
+Welcome message rendered EXACTLY with line breaks preserved:
+
+يمكن تحس إنك متضايق
+أو متلخبط
+أو حتى ما تدري وش فيك
+
+عادي
+
+اكتب اللي في بالك
+وأنا بسألك كم سؤال
+عشان نفصل الشعور
+عن المشكلة
+
+خلك على طبيعتك
+ما فيه إجابة صح أو غلط
+
+
+Large textarea for the first vent
+
+Chat transcript (user / assistant bubbles)
+
+Input field + send button
+
+“ابدأ من جديد” button that clears conversation
+
+Footer disclaimer:
+“تنبيه: هذا فهم مبدئي مو تشخيص طبي”
+
+UX rules
+
+RTL by default
+
+Calm layout, max width ~720px
+
+One assistant message per turn
+
+Show “typing…” indicator when waiting
+
+Disable send button while responding
+
+4) Conversation rules (IMPORTANT)
+
+Assistant must ask only one question per message
+
+Tone: Saudi white Arabic
+
+Calm by default, slightly firm when needed
+
+No medical or psychological diagnosis
+
+No words like: “لازم / يجب”
+
+5) Mock AI logic (CORE REQUIREMENT)
+Create /api/chat route:
+
+Accepts:
+
+{
+  messages: { role: "user" | "assistant"; content: string }[]
+}
+
+The route MUST:
+
+NOT call OpenAI
+
+Return responses from a Mock AI Engine
+
+6) Mock AI Engine behavior
+
+Implement a simple deterministic flow:
+
+A) Question phase (first 2–4 replies)
+
+Return one of these in order:
+
+خلّني أتأكد إني فاهمك صح…
+تحس إن الموضوع مأثر عليك أكثر مما توقعت؟
+
+هالشعور له فترة؟
+ولا جاك بالفترة الأخيرة؟
+
+تحس المشكلة فيك أنت؟
+ولا في ظرف حولك؟
+
+بسألك بصراحة…
+تحس إنك عارف وش المفروض تسوي بس ما سويته؟
+
+B) Final reveal (after enough messages)
+
+Return this EXACT structure:
+
+مشكلتك مو [التعب / التوتر / الضياع]
+
+مشكلتك إنك شايل أكثر من طاقتك
+وتحاول تكمل بدون ما توقف
+
+من كلامك واضح إنك متعود تتحمل
+حتى وأنت متعب
+
+ما تحتاج تغيّر كل شي
+بس انتبه لهالنقطة:
+لا تكمل تعطي بدون ما توقف
+
+C) End message
+
+After the reveal, stop asking questions.
+
+7) File structure (required)
+
+app/page.tsx
+
+app/api/chat/route.ts
+
+components/Chat.tsx
+
+components/MessageBubble.tsx
+
+app/globals.css
+
+README.md with run instructions

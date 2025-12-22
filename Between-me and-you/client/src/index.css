@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light mode - Soft, Saudi white tone inspired palette */
+  --background: 40 20% 97%; /* #F9F8F6 - Warm off-white */
+  --foreground: 210 20% 25%; /* Soft charcoal */
+
+  --card: 0 0% 100%;
+  --card-foreground: 210 20% 25%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 20% 25%;
+
+  /* Calming teal/blue for primary actions */
+  --primary: 196 65% 35%; /* #1F6E8C */
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 40 15% 92%; /* Slightly darker warm gray */
+  --secondary-foreground: 210 20% 25%;
+
+  --muted: 40 10% 90%;
+  --muted-foreground: 215 10% 50%;
+
+  --accent: 196 65% 95%; /* Very light teal */
+  --accent-foreground: 196 65% 30%;
+
+  --destructive: 0 65% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 40 10% 90%;
+  --input: 40 10% 90%;
+  --ring: 196 65% 35%;
+
+  --radius: 0.75rem;
+
+  --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+.dark {
+  /* Dark mode - Like Replit */
+  --background: 217 33% 17%; /* Dark charcoal */
+  --foreground: 210 40% 96%; /* Light off-white */
+
+  --card: 217 32% 23%; /* Slightly lighter than background */
+  --card-foreground: 210 40% 96%;
+
+  --popover: 217 32% 23%;
+  --popover-foreground: 210 40% 96%;
+
+  /* Calming teal/blue - adjusted for dark mode */
+  --primary: 196 70% 55%; /* Brighter teal for dark mode */
+  --primary-foreground: 217 33% 17%;
+
+  --secondary: 217 30% 35%;
+  --secondary-foreground: 210 40% 96%;
+
+  --muted: 217 30% 35%;
+  --muted-foreground: 215 15% 65%;
+
+  --accent: 196 70% 60%; /* Brighter accent */
+  --accent-foreground: 217 33% 17%;
+
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217 30% 32%;
+  --input: 217 32% 28%;
+  --ring: 196 70% 55%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased font-arabic;
+    direction: rtl; /* Enforce RTL globally */
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-arabic font-bold tracking-tight;
+  }
+}
+
+/* Custom Scrollbar for a cleaner look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/20 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/40;
+}
