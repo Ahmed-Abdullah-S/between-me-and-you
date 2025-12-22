@@ -144,16 +144,54 @@ export default function Home() {
             ))}
           </AnimatePresence>
 
-          {/* Loading Indicator */}
+          {/* Loading Indicator - Instagram style animated dots (subtle) */}
           {chatMutation.isPending && (
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
               className="flex justify-end"
             >
-              <div className="bg-muted text-muted-foreground px-4 py-2 rounded-2xl rounded-tl-sm text-sm flex items-center gap-2">
-                <Loader2 className="w-3 h-3 animate-spin" />
-                جاري الكتابة...
+              <div className="bg-card border border-border px-5 py-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center justify-center gap-1.5">
+                <motion.span
+                  className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.4, 1, 0.4],
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    delay: 0,
+                    ease: "easeInOut",
+                  }}
+                />
+                <motion.span
+                  className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.4, 1, 0.4],
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    delay: 0.4,
+                    ease: "easeInOut",
+                  }}
+                />
+                <motion.span
+                  className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.4, 1, 0.4],
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    delay: 0.8,
+                    ease: "easeInOut",
+                  }}
+                />
               </div>
             </motion.div>
           )}
