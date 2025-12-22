@@ -1,7 +1,4 @@
-type Message = {
-  role: "user" | "assistant" | "system";
-  content: string;
-};
+import type { Message } from "@shared/schema";
 
 const QUESTIONS = [
   "خلّني أتأكد إني فاهمك صح…\nاللي تقول فيه معك من متى؟",

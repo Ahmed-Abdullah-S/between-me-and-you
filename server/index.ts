@@ -4,8 +4,10 @@ import { resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 
 const envLocalPath = resolve(process.cwd(), ".env.local");
-console.log("[Env] Looking for .env.local at:", envLocalPath);
-console.log("[Env] Current working directory:", process.cwd());
+if (process.env.NODE_ENV !== "production") {
+  console.log("[Env] Looking for .env.local at:", envLocalPath);
+  console.log("[Env] Current working directory:", process.cwd());
+}
 
 if (existsSync(envLocalPath)) {
   console.log("[Env] .env.local file found!");
@@ -13,36 +15,35 @@ if (existsSync(envLocalPath)) {
   const result = config({ path: envLocalPath, override: true });
   if (result.error) {
     console.warn("[Env] Warning: Could not load .env.local:", result.error.message);
-  } else {
-    console.log("[Env] Loaded .env.local successfully");
-    // Debug: Show if OPENAI_API_KEY was loaded (without exposing the key)
-    const keyLoaded = !!process.env.OPENAI_API_KEY;
-    const keyLength = process.env.OPENAI_API_KEY?.length || 0;
-    console.log(`[Env] OPENAI_API_KEY loaded: ${keyLoaded}, length: ${keyLength}`);
-    if (!keyLoaded) {
-      // Try to read file directly to debug
-      try {
-        const fileContent = readFileSync(envLocalPath, "utf-8");
-        const lines = fileContent.split("\n");
-        const keyLine = lines.find(line => line.trim().startsWith("OPENAI_API_KEY="));
-        console.log("[Env] File contains OPENAI_API_KEY line:", !!keyLine);
-        if (keyLine) {
-          const keyValue = keyLine.split("=")[1]?.trim();
-          console.log("[Env] Key value length:", keyValue?.length || 0);
-          console.log("[Env] Key value starts with 'sk-':", keyValue?.startsWith("sk-") || false);
-        }
-        // Show first 150 chars of file for debugging (safe)
-        console.log("[Env] File preview (first 150 chars):", JSON.stringify(fileContent.substring(0, 150)));
-      } catch (err) {
-        console.error("[Env] Could not read file:", err);
-      }
     } else {
-      console.log("[Env] ✅ API key successfully loaded!");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[Env] Loaded .env.local successfully");
+      }
+      // Debug: Show if OPENAI_API_KEY was loaded (without exposing the key)
+      const keyLoaded = !!process.env.OPENAI_API_KEY;
+      if (process.env.NODE_ENV !== "production" && !keyLoaded) {
+        const keyLength = process.env.OPENAI_API_KEY?.length || 0;
+        console.log(`[Env] OPENAI_API_KEY loaded: ${keyLoaded}, length: ${keyLength}`);
+        // Try to read file directly to debug
+        try {
+          const fileContent = readFileSync(envLocalPath, "utf-8");
+          const lines = fileContent.split("\n");
+          const keyLine = lines.find(line => line.trim().startsWith("OPENAI_API_KEY="));
+          console.log("[Env] File contains OPENAI_API_KEY line:", !!keyLine);
+          if (keyLine) {
+            const keyValue = keyLine.split("=")[1]?.trim();
+            console.log("[Env] Key value length:", keyValue?.length || 0);
+            console.log("[Env] Key value starts with 'sk-':", keyValue?.startsWith("sk-") || false);
+          }
+        } catch (err) {
+          console.error("[Env] Could not read file:", err);
+        }
+      }
     }
-  }
 } else {
-  console.log("[Env] ❌ .env.local not found at:", envLocalPath);
-  console.log("[Env] Using .env or system env vars");
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[Env] .env.local not found, using .env or system env vars");
+  }
 }
 // Load .env as fallback (but .env.local already loaded with override, so this won't override it)
 config();
@@ -51,6 +52,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { getServerConfig } from "./config";
+import { getServerConfig } from "./config";
 
 const app = express();
 const httpServer = createServer(app);
@@ -133,12 +136,11 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
+  const { port, openai } = getServerConfig();
   
   // Log AI mode on startup
-  const aiMode = process.env.OPENAI_API_KEY ? "🤖 Real AI (OpenAI)" : "🎭 Mock AI";
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
-  log(`AI Mode: ${aiMode}${process.env.OPENAI_API_KEY ? ` (Model: ${model})` : ""}`);
+  const aiMode = openai.enabled ? "🤖 Real AI (OpenAI)" : "🎭 Mock AI";
+  log(`AI Mode: ${aiMode}${openai.enabled ? ` (Model: ${openai.model})` : ""}`);
   
   httpServer.listen(
     {

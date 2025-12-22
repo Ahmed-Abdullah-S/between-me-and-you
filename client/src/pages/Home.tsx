@@ -7,10 +7,7 @@ import { Send, RefreshCw, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeProvider";
 
-type Message = {
-  role: "user" | "assistant" | "system";
-  content: string;
-};
+import type { Message } from "@shared/schema";
 
 const WELCOME_MESSAGE = `يمكن تحس إنك متضايق
 أو متلخبط
