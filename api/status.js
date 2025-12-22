@@ -1,4 +1,6 @@
 // Vercel serverless function for /api/status
+// Note: Vercel automatically loads environment variables, no need for dotenv
+
 async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');

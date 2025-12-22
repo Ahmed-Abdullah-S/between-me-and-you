@@ -4,14 +4,6 @@
   "outputDirectory": "dist/public",
   "installCommand": "npm install",
   "framework": null,
-  "functions": {
-    "api/chat.cjs": {
-      "runtime": "nodejs18.x"
-    },
-    "api/status.cjs": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",
