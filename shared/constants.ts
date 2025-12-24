@@ -126,6 +126,6 @@ export const DEVELOPER_PROMPT = `أنت "بيني وبينك".
 "إذا حاب تكمل… أنا معك."`;
 
 export const DEFAULT_MODEL = "gpt-4o-mini";
-export const DEFAULT_TEMPERATURE = 0.6;
+export const DEFAULT_TEMPERATURE = 0.80;
 export const DEFAULT_PORT = 5000;
 
