@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -37,39 +38,47 @@
 
   --radius: 0.75rem;
 
-  --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+  
+  /* Gradient backgrounds */
+  --gradient-subtle: linear-gradient(135deg, hsl(40 20% 97%) 0%, hsl(196 30% 96%) 100%);
+  --gradient-primary: linear-gradient(135deg, hsl(196 65% 35%) 0%, hsl(196 55% 45%) 100%);
 }
 
 .dark {
-  /* Dark mode - Like Replit */
-  --background: 217 33% 17%; /* Dark charcoal */
+  /* Dark mode - Premium dark theme */
+  --background: 220 25% 10%; /* Deep charcoal */
   --foreground: 210 40% 96%; /* Light off-white */
 
-  --card: 217 32% 23%; /* Slightly lighter than background */
+  --card: 220 25% 14%; /* Slightly lighter than background */
   --card-foreground: 210 40% 96%;
 
-  --popover: 217 32% 23%;
+  --popover: 220 25% 14%;
   --popover-foreground: 210 40% 96%;
 
   /* Calming teal/blue - adjusted for dark mode */
   --primary: 196 70% 55%; /* Brighter teal for dark mode */
-  --primary-foreground: 217 33% 17%;
+  --primary-foreground: 220 25% 10%;
 
-  --secondary: 217 30% 35%;
+  --secondary: 220 20% 22%;
   --secondary-foreground: 210 40% 96%;
 
-  --muted: 217 30% 35%;
+  --muted: 220 20% 22%;
   --muted-foreground: 215 15% 65%;
 
   --accent: 196 70% 60%; /* Brighter accent */
-  --accent-foreground: 217 33% 17%;
+  --accent-foreground: 220 25% 10%;
 
   --destructive: 0 70% 50%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 217 30% 32%;
-  --input: 217 32% 28%;
+  --border: 220 20% 22%;
+  --input: 220 25% 18%;
   --ring: 196 70% 55%;
+  
+  /* Dark gradient backgrounds */
+  --gradient-subtle: linear-gradient(135deg, hsl(220 25% 10%) 0%, hsl(220 30% 14%) 100%);
+  --gradient-primary: linear-gradient(135deg, hsl(196 70% 55%) 0%, hsl(196 60% 45%) 100%);
 }
 
 @layer base {
@@ -79,9 +88,41 @@
   body {
     @apply bg-background text-foreground antialiased font-arabic;
     direction: rtl; /* Enforce RTL globally */
+    background: var(--gradient-subtle);
+    min-height: 100vh;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-arabic font-bold tracking-tight;
+  }
+}
+
+/* Premium button hover effect */
+@layer components {
+  .btn-premium {
+    @apply relative overflow-hidden transition-all duration-300;
+    background: var(--gradient-primary);
+  }
+  .btn-premium::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+  }
+  .btn-premium:hover::before {
+    @apply opacity-100;
+  }
+  
+  /* Subtle card hover effect */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+  .card-hover:hover {
+    @apply shadow-lg -translate-y-0.5;
+  }
+  
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
   }
 }
 

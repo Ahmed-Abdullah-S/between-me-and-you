@@ -30,6 +30,17 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks for better caching
+          "react-vendor": ["react", "react-dom"],
+          "router-vendor": ["wouter"],
+          "query-vendor": ["@tanstack/react-query"],
+          "ui-vendor": ["framer-motion", "lucide-react"],
+        },
+      },
+    },
   },
   server: {
     fs: {

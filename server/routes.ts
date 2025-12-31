@@ -38,7 +38,7 @@ setInterval(() => {
   ipsToDelete.forEach(ip => rateLimitMap.delete(ip));
 }, RATE_LIMIT_WINDOW);
 
-import { DEVELOPER_PROMPT, DEFAULT_MODEL, DEFAULT_TEMPERATURE } from "@shared/constants";
+import { DEVELOPER_PROMPT, DEFAULT_MODEL, DEFAULT_TEMPERATURE, OPENAI_REQUEST_TIMEOUT } from "@shared/constants";
 
 import type { Message } from "@shared/schema";
 
@@ -59,33 +59,48 @@ async function callOpenAI(messages: Message[]): Promise<string> {
     })),
   ];
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages: openAIMessages,
-      temperature: DEFAULT_TEMPERATURE,
-    }),
-  });
+  // Create abort controller for timeout
+  const abortController = new AbortController();
+  const timeoutId = setTimeout(() => abortController.abort(), OPENAI_REQUEST_TIMEOUT);
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const errorMessage = errorData.error?.message || "OpenAI API error";
-    throw new Error(`OpenAI API failed: ${errorMessage}`);
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages: openAIMessages,
+        temperature: DEFAULT_TEMPERATURE,
+      }),
+      signal: abortController.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || "OpenAI API error";
+      throw new Error(`OpenAI API failed: ${errorMessage}`);
+    }
+
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content;
+
+    if (!reply || typeof reply !== "string") {
+      throw new Error("Invalid response format from OpenAI");
+    }
+
+    return reply;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("OpenAI API request timed out after 30 seconds");
+    }
+    throw error;
   }
-
-  const data = await response.json();
-  const reply = data.choices?.[0]?.message?.content;
-
-  if (!reply || typeof reply !== "string") {
-    throw new Error("Invalid response format from OpenAI");
-  }
-
-  return reply;
 }
 
 export async function registerRoutes(
